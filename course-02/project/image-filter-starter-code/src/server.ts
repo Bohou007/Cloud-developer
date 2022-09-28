@@ -2,6 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 const path = require('path');
 const fs = require('fs');
+import authentication from './middlewares/auth'
 
 import { filterImageFromURL, deleteLocalFiles } from './util/util';
 
@@ -41,17 +42,19 @@ import { filterImageFromURL, deleteLocalFiles } from './util/util';
   });
 
 
-  app.get("/filteredimage", async (req, res) => {
+  app.get("/filteredimage", authentication, async (req, res) => {
     try {
       if (req.query.image_url) {
         let filteredpath = await filterImageFromURL(req.query.image_url);
-        res.sendFile(filteredpath, () => {
+        res.status(200).sendFile(filteredpath, () => {
           deleteLocalFiles([filteredpath]);
           console.log(filteredpath);
-        });
+        })
+      } else {
+        res.status(404).json("Image url not exist. Please try again and put image url.")
       }
     } catch (err) {
-      res.send(err);
+      res.status(500).json(err);
     }
   });
 
