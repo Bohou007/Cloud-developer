@@ -1,48 +1,34 @@
-import * as uuid from 'uuid'
-
+import { TodoAccess } from './todosAcess'
 import { TodoItem } from '../models/TodoItem'
-import { TodoAccess } from '../helpers/todosAcess'
-import { CreateTodoRequest } from '../requests/CreateTodoRequest'
 import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
+// const logger = createLogger('TodosBusinessLogic')
 
 const todoAccess = new TodoAccess()
 
-export async function getTodosForUser(userId: string) {
+export async function actionToGetTodosForUser(userId: string) {
     return await todoAccess.getAllTodos(userId);
 }
 
-export async function createTodo(
-    createTodoRequest: CreateTodoRequest,
-    userId: string
-): Promise<TodoItem> {
-    const itemId = uuid.v4()
-    return await todoAccess.saveTodo({
-        todoId: itemId,
-        userId: userId,
-        name: createTodoRequest.name,
-        dueDate: createTodoRequest.dueDate,
-        done: false,
-        createdAt: new Date().toISOString(),
-        attachmentUrl: ''
-    })
+export async function actionTocreateTodoItem(todoItem: TodoItem): Promise<TodoItem> {
+    return await todoAccess.saveTodo(todoItem)
 }
 
-export async function updateTodo(
+export async function actionToUpdateTodoItem(
     updateTodoRequest: UpdateTodoRequest,
     todoId: string, userId: string
 ) {
     return await todoAccess.updateTodo(todoId, userId, updateTodoRequest)
 }
 
-export async function deleteTodo(todoId: string, userId: string) {
+export async function actionToDeleteTodoItem(todoId: string, userId: string) {
     return await todoAccess.deleteTodo(todoId, userId)
 }
 
 
-export async function todoExists(todoId: string) {
+export async function actionToVerifyTodoExists(todoId: string) {
     return await todoAccess.todoExists(todoId);
 }
 
-export async function createAttachmentPresignedUrl(todoId: string, userId: string) {
+export async function actionToCreateAttachmentPresignedUrl(todoId: string, userId: string) {
     return await todoAccess.createAttachImageUrl(todoId, userId);
 }
